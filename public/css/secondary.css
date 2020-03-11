@@ -88,3 +88,28 @@
 #toggle-close{
   display: none;
 }
+
+.space{
+  margin-left:2%;
+}
+
+div.stick{
+  position: -webkit-sticky;
+  position: sticky;
+  top:0;
+}
+
+.borrow-field{
+  text-align: center;
+}
+
+.pending-item{
+  height: 30px;
+  background-color: #254269;
+  display: flex;
+  border-bottom: 1px solid red;
+}
+
+.actions{
+  margin-left: 40%;
+}

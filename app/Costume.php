@@ -13,6 +13,8 @@ class Costume extends Model
     'costume_name',
     'costume_category',
     'costume_status',
-    'costume_prefix'
+    'costume_prefix',
+    'costume_borowee',
+    'costume_deadline'
   ];
 }

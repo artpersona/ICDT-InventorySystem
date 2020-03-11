@@ -269,6 +269,14 @@ $( function() {
                                     </div>
                                   </center>
                                   </td>
+                                  @else
+                                  <td>
+                                    <center>
+                                    <div class="btn btn-outline-danger" style ="border: 1px solid red">
+                                      Borrowed
+                                    </div>
+                                  </center>
+                                  </td>
                                   @endif
 
                                   <td>
@@ -473,7 +481,7 @@ $( function() {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4 class="modal-title w-100" id="myModalLabel">Adding a Classification</h4>
+                <h4 class="modal-title w-100" id="myModalLabel">Updating Classification</h4>
                 <button type="button" class="close" data-dismiss="modal"
                     aria-hidden="true">×</button>
             </div>
@@ -484,49 +492,32 @@ $( function() {
                   <div class="row">
                     <div class="col-sm-12 form-group">
                       <label>Costume Prefix</label>
-                      <input id="type_prefix" class="form-control" name="costumeType_prefix" placeholder="Enter Prefix here.." required>
+                      <input id="type_prefix" class="form-control" name="type_prefix" placeholder="Enter Prefix here.." required>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-sm-12 form-group">
                       <label>Costume Name</label>
-                      <input id="type_name" class="form-control" name="costumeType_name" placeholder="Enter Name here.." required>
+                      <input id="type_name" class="form-control" name="type_name" placeholder="Enter Name here.." required>
                     </div>
 
                   </div>
                   <div class="row">
                     <div class="col-sm-12 form-group">
                         <label>Costume Category</label>
-                        <br>
-                      <div class="form-check form-check-inline">
-                          <div class="custom-control  custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" value="Upper" id="customCheck1" disabled="disabled">
-                              <label class="custom-control-label" for="customCheck1">Upper</label>
-                          </div>
-                      </div>
-                      <div class="form-check form-check-inline">
-                          <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" value="Lower" id="customCheck2" disabled="disabled">
-                              <label class="custom-control-label" for="customCheck2">Lower</label>
-                          </div>
-                      </div>
-                      <div class="form-check form-check-inline">
-                          <div class="custom-control  custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" value="Accessory" id="customCheck3" disabled="disabled">
-                              <label class="custom-control-label" for="customCheck3">Accessory</label>
-                          </div>
-                      </div>
-
-                      <div class="form-check form-check-inline">
-                          <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" value="Props" id="customCheck4" disable="disabled">
-                              <label class="custom-control-label" for="customCheck4">Props</label>
-                          </div>
-                      </div>
+                        <div class="form-group">
+                          <select class="form-control" name="type_category">
+                            <option>Select Gender</option>
+                            <option value="Upper">Upper</option>
+                            <option value="Lower">Lower</option>
+                            <option value="Accessory">Accessory</option>
+                            <option value="Props">Props</option>
+                          </select>
+                        </div>
 
                     </div>
-
                   </div>
+
 
                 </div>
 
@@ -576,6 +567,7 @@ $(document).ready(function() {
   $('#categories_list').DataTable();
 
   $('#addCostume').click(function(e){
+    alert('fuck')
     e.preventDefault();
     var str = $('select[name=costume_name]').val();
     var arr = str.split(" - ");
@@ -630,6 +622,7 @@ function () {
 $('.deleteCostume').click(function(e){
   e.preventDefault();
   var x = $(this).data('costume_id');
+  
   swal({
   title: "Confirm Deletion",
   text: "This item will be permanently deleted",
@@ -712,8 +705,6 @@ $.ajax({
       '<center>'+'<a class="btn btn-warning btn-rounded btn-sm" href="{{route('member.profile','data.student_id')}}">'+
       '<i class="fas fa-cog">'+'</i>'+'Update'+'</a>'+'</center>';
 
-
-
       t.row.add([
         data.type_id,
         data.type_prefix,
@@ -729,26 +720,73 @@ $.ajax({
 
 $('.updateType').click(function(e){
   e.preventDefault();
+  var x = $(this).data('type_id');
   var temp = $(this).data('type_prefix');
+  var pref = temp;
   var temp2 = $(this).data('type_category');
-  temp = temp.substring(0,temp.length-1);
+
   $('#type_prefix').val(temp);
   $('#type_name').val($(this).data('type_name'));
-  if(temp2=="Upper"){
-    $('.customCheck1').prop("disabled",false);
-  }
-  else if(temp2=="Lower"){
-    $('.customCheck2').prop("disabled",false);
-  }
-  else if(temp2=="Accessory"){
-    $('.customCheck3').prop("disabled",false);
-  }
-  else{
-    $('.customCheck4').prop("disabled",false);
-  }
-
-
+  //todo code about category
   $('#updateType-modal').modal('show');
+  alert(pref)
+  $('#updateType').click(function (e){
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: 'getCount',
+      data: {
+        '_token': $('input[name=_token]').val(),
+        'type_prefix': pref,
+        'type_name': $('input[name=type_name]').val()
+      },
+      success: function(data1){
+        swal({
+          title: "Confirm Update",
+          text: `${data1} items will be updated`,
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          confirmButtonText: "Update",
+          closeOnConfirm: false
+        },
+        function(){
+          var newPref = pref.substring(0,pref.length-1);
+          var newCat =  $('select[name=type_category]').val();
+        
+       
+          newPref = newPref+ newCat.charAt(0);
+          alert(newPref)
+          $.ajax({
+            type: 'POST',
+            url: 'updateType',
+            data:{
+              '_token': $('input[name=_token]').val(),
+              'type_prefix': pref,
+              'type_name': $('input[name=type_name]').val(),
+              'type_category': $('select[name=type_category]').val(),
+              'type_id': x,
+              'type_newPref' : newPref
+          },
+          success: function(data){
+            swal({
+          title: 'Inventory Updated',
+          text: 'Costume Records Updated',
+          type: 'success',
+          allowOutsideClick: true,
+          html: true
+        }, function(){
+          location.reload();
+        }
+      );
+          },
+        });
+        }
+        );
+      }
+    })
+
+  })
 });
 
 $('.deleteType').click(function(e){
@@ -802,7 +840,6 @@ $('.deleteType').click(function(e){
     });
     },
   });
-
 
 });
 

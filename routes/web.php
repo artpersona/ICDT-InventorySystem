@@ -33,6 +33,8 @@ Route::POST('members/{id}/activateMember','MembersController@activate');
 //Classifications CRUD
 Route::POST('addType','CostumesController@addType');
 Route::POST('getCount','CostumesController@getCount');
+Route::POST('getCount2','CostumesController@getCount2');
+Route::POST('updateType','CostumesController@updateType');
 Route::POST('deleteType','CostumesController@deleteType');
 
 
@@ -41,3 +43,12 @@ Route::POST('addCostume','CostumesController@addCostume');
 Route::get('test2','FacadesController@test2');
 Route::get('/borrow','CostumesController@borrow');
 Route::POST('/deleteCostume','CostumesController@deleteCostume');
+
+
+//Borrow Routes
+Route::POST('startSession','LeasingController@startSession');
+Route::POST('tempAdd','LeasingController@tempAdd');
+Route::POST('tempRemove','LeasingController@tempRemove');
+
+
+//Return Routes

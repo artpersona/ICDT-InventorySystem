@@ -43,6 +43,8 @@ class CostumesController extends Controller
           $costume-> costume_name = $request->costume_name;
           $costume-> costume_category = $request->costume_category;
           $costume-> costume_status = "Available";
+          $costume-> costume_borowee = "Admin";
+          $costume-> costume_deadline = "1999-12-04";
           $costume->save();
           array_push($res,$costume);
         $iterator++;
@@ -60,6 +62,36 @@ class CostumesController extends Controller
       $costumes = Costume::where('costume_prefix','=',$request->type_prefix)->get();
       $size = sizeof($costumes);
       return response()->json($size);
+    }
+
+    public function getCount2(Request $request){
+      $prefix = $request->type_category;
+      $prefix = $prefix[0];
+      $prefix = $request->type_prefix."".$prefix;
+      $costumes = Costume::where('costume_prefix','=',$prefix)->get();
+      $size = sizeof($costumes);
+      return response()->json($size);
+    }
+
+    public function updateType(Request $request){
+      $costumes = Costume::where('costume_prefix','=',$request->type_prefix)->get();
+      $newCostumes = Costume::where('costume_prefix','=',$request->type_newPref)->get();
+      $incrementor = sizeOf($newCostumes);
+      for($i=0;$i<sizeOf($costumes);$i++){
+        $code = $costumes[$i]->costume_id; 
+        $costume = Costume::find($code);
+        $costume -> costume_category = $request->type_category;
+        $costume -> costume_prefix = $request->type_newPref;
+        $costume -> costume_id = $request->type_newPref."".$incrementor;
+        $incrementor++;
+        $costume->save();
+      }
+      $type = Type::find($request->type_id);
+      $type -> type_prefix = $request->type_newPref;
+      $type -> type_name = $request->type_name;
+      $type -> type_category = $request->type_category;
+      $type ->save();
+      return response()->json($type);
     }
 
     public function deleteType(Request $request){

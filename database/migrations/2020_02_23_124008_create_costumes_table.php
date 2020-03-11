@@ -19,6 +19,8 @@ class CreateCostumesTable extends Migration
             $table->string('costume_name',30);
             $table->string('costume_category',20);
             $table->string('costume_status',20);
+            $table->string('costume_borowee',40);
+            $table->date('costume_deadline');
 
 
         });
